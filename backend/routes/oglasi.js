@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../db.js');
 
 router.get('/', (req, res) => {
-  db.query('SELECT * FROM oglas', (err, results) => {
+  db.query('SELECT * FROM ads', (err, results) => {
     if (err) {
       console.error('Error fetching oglas:', err);
       return res.status(500).json({ error: 'Database error' });
@@ -14,16 +14,14 @@ router.get('/', (req, res) => {
 
 // POST /oglasi 
 router.post('/', (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, game, rank, region, creator } = req.body;
 
-  console.log('Received new ad:', title, description);
+if (!title || !description || !game || !rank || !region) {
+  return res.status(400).json({ error: 'All fields except creator are required.' });
+}
 
-  if (!title || !description) {
-    return res.status(400).json({ error: 'You need to set the title and the description.' });
-  }
-
-  const query = 'INSERT INTO oglas (title, description) VALUES (?, ?)';
-  db.query(query, [title, description], (err, result) => {
+  const query = 'INSERT INTO ads (title, description, game, rank, region, creator) VALUES (?, ?, ?, ?, ?, ?)';
+  db.query(query, [title, description, game, rank, region, creator || 'guest'], (err, result) => {
     if (err) {
       console.error('Error inserting ad:', err);
       return res.status(500).json({ error: 'Database error' });
