@@ -1,18 +1,33 @@
 import React, { useEffect, useState } from 'react';
 
-function App() {
+function App() {                        
   const [ads, setAds] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [game, setGame] = useState('');
   const [rank, setRank] = useState('');
   const [region, setRegion] = useState('');
-  const [creator, setCreator] = useState('guest');
+  const [creator, setCreator] = useState('');
+  const [regUsername, setRegUsername] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('username') || null);
 
-//Filtri
-const [filterGame, setFilterGame] = useState('');
-const [filterRegion, setFilterRegion] = useState('');
-const [filterRank, setFilterRank] = useState('');
+
+  //Filtri
+  const [filterGame, setFilterGame] = useState('');
+  const [filterRegion, setFilterRegion] = useState('');
+  const [filterRank, setFilterRank] = useState('');
+
+  //za edit
+  const [editingAd, setEditingAd] = useState(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editGame, setEditGame] = useState('');
+  const [editRank, setEditRank] = useState('');
+  const [editRegion, setEditRegion] = useState('');
+
 
 
   // Load ads on page load
@@ -30,175 +45,407 @@ const [filterRank, setFilterRank] = useState('');
     fetch('http://localhost:3001/oglasi', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description, game, rank, region, creator }) 
+      body: JSON.stringify({ title, description, game, rank, region, creator: loggedInUser})
     })
       .then((res) => res.json())
       .then((newAd) => {
         console.log('New ad response from backend:', newAd);
-        setAds([...ads, { id: newAd.adId || Date.now(), title, description, game, rank, region, creator }]);
+        setAds([...ads, { id: newAd.adId || Date.now(), title, description, game, rank, region, creator}]);
         setTitle('');
         setDescription('');
         setGame('');
         setRank('');
         setRegion('');
-        setCreator('guest');
+        setCreator('');
       })
       .catch((err) => console.error('Error posting ad:', err));
   };
-
-const gameOptions = ['Valorant', 'League of Legends', 'CS2', 'Overwatch'];
-
-const rankOptions = {
-  'Valorant': [
-    'Iron I', 'Iron II', 'Iron III', 'Bronze I', 'Bronze II', 'Bronze III',
-    'Silver I', 'Silver II', 'Silver III', 'Gold I', 'Gold II', 'Gold III',
-    'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II', 'Diamond III',
-    'Ascendant I', 'Ascendant II', 'Ascendant III', 'Immortal I', 'Immortal II', 'Immortal III', 'Radiant'
-  ],
-  'League of Legends': [
-    'Iron I', 'Iron II', 'Iron III', 'Iron IV', 'Bronze I', 'Bronze II', 'Bronze III', 'Bronze IV',
-    'Silver I', 'Silver II', 'Silver III', 'Silver IV', 'Gold I', 'Gold II', 'Gold III', 'Gold IV',
-    'Platinum I', 'Platinum II', 'Platinum III', 'Platinum IV',
-    'Emerald I', 'Emerald II', 'Emerald III', 'Emerald IV',
-    'Diamond I', 'Diamond II', 'Diamond III', 'Diamond IV',
-    'Master', 'Grand Master', 'Challenger'
-  ],
-  'CS2': [
-    'Common (0-4999)', 'Uncommon (5000-9999)', 'Rare (10000-14999)',
-    'Mythical (15000-19999)', 'Legendary (20000-24999)',
-    'Ancient (25000-29999)', 'Unusual (30000+)'
-  ],
-  'Overwatch': [
-    'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond',
-    'Master', 'Grandmaster', 'Champion', 'Top 500'
-  ]
+//hANDLE EDIT 
+const handleEditSubmit = (e) => {
+  e.preventDefault();
+  console.log('Editing ad ID:', editingAd);
+  console.log('PUT data:', { title: editTitle, description: editDescription, game: editGame, rank: editRank, region: editRegion });
+  fetch(`http://localhost:3001/oglasi/${editingAd}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      title: editTitle,
+      description: editDescription,
+      game: editGame,
+      rank: editRank,
+      region: editRegion,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log('Edit response:', data);
+      setAds(
+        ads.map((ad) =>
+          ad.id === editingAd
+            ? {
+                ...ad,
+                title: editTitle,
+                description: editDescription,
+                game: editGame,
+                rank: editRank,
+                region: editRegion,
+              }
+            : ad
+        )
+      );
+      setEditingAd(null);
+    })
+    .catch((err) => console.error('Error editing ad:', err));
 };
 
-const regionOptions = {
-  'Valorant': ['NA', 'LATAM', 'BR', 'EU', 'KR', 'AP', 'JP', 'Middle East'],
-  'League of Legends': ['NA', 'EUW', 'EUNE', 'KR', 'BR', 'LAN', 'LAS', 'RU', 'TR', 'OCE', 'JP', 'CN'],
-  'Overwatch': ['Americas', 'EU', 'Asia', 'China'],
-  'CS2': ['US East', 'US West', 'South America', 'Europe', 'Russia', 'Middle East', 'Africa', 'Asia']
+
+  const handleDelete = (id) => {
+    fetch(`http://localhost:3001/oglasi/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Delete response:', data);
+        setAds(ads.filter((ad) => ad.id !== id));
+      })
+      .catch((err) => console.error('Error deleting ad:', err));
+  };
+
+  //handle LOGIN
+  const handleLogin = (e) => {
+  e.preventDefault();
+
+  fetch('http://localhost:3001/users/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.error) {
+        alert(data.error);
+      } else {
+        localStorage.setItem('username', data.user.username);
+        setLoggedInUser(data.user.username);
+        setUsername('');
+        setPassword('');
+        alert('Prijava uspešna')
+      }
+    })
+    .catch((err) => console.error('Login error:', err));
 };
 
+//Handle REGISTER
+const handleRegister = (e) => {
+  e.preventDefault();
+
+  fetch('http://localhost:3001/users/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: regUsername, password: regPassword }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.error) {
+        alert(data.error);
+      } else {
+        alert('Registracija uspešna, sedaj se lahko prijavite');
+        setRegUsername('');
+        setRegPassword('');
+      }
+    })
+    .catch((err) => console.error('Register error:', err));
+};
+
+
+const handleLogout = () => {
+  localStorage.removeItem('username');
+  setLoggedInUser(null);
+};
+
+
+  const gameOptions = ['Valorant', 'League of Legends', 'CS2', 'Overwatch'];
+
+  const rankOptions = {
+    'Valorant': [
+      'Iron I', 'Iron II', 'Iron III', 'Bronze I', 'Bronze II', 'Bronze III',
+      'Silver I', 'Silver II', 'Silver III', 'Gold I', 'Gold II', 'Gold III',
+      'Platinum I', 'Platinum II', 'Platinum III', 'Diamond I', 'Diamond II', 'Diamond III',
+      'Ascendant I', 'Ascendant II', 'Ascendant III', 'Immortal I', 'Immortal II', 'Immortal III', 'Radiant'
+    ],
+    'League of Legends': [
+      'Iron I', 'Iron II', 'Iron III', 'Iron IV', 'Bronze I', 'Bronze II', 'Bronze III', 'Bronze IV',
+      'Silver I', 'Silver II', 'Silver III', 'Silver IV', 'Gold I', 'Gold II', 'Gold III', 'Gold IV',
+      'Platinum I', 'Platinum II', 'Platinum III', 'Platinum IV',
+      'Emerald I', 'Emerald II', 'Emerald III', 'Emerald IV',
+      'Diamond I', 'Diamond II', 'Diamond III', 'Diamond IV',
+      'Master', 'Grand Master', 'Challenger'
+    ],
+    'CS2': [
+      'Common (0-4999)', 'Uncommon (5000-9999)', 'Rare (10000-14999)',
+      'Mythical (15000-19999)', 'Legendary (20000-24999)',
+      'Ancient (25000-29999)', 'Unusual (30000+)'
+    ],
+    'Overwatch': [
+      'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond',
+      'Master', 'Grandmaster', 'Champion', 'Top 500'
+    ]
+  };
+
+  const regionOptions = {
+    'Valorant': ['NA', 'LATAM', 'BR', 'EU', 'KR', 'AP', 'JP', 'Middle East'],
+    'League of Legends': ['NA', 'EUW', 'EUNE', 'KR', 'BR', 'LAN', 'LAS', 'RU', 'TR', 'OCE', 'JP', 'CN'],
+    'Overwatch': ['Americas', 'EU', 'Asia', 'China'],
+    'CS2': ['US East', 'US West', 'South America', 'Europe', 'Russia', 'Middle East', 'Africa', 'Asia']
+  };
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Oglasi (Ads)</h1>
+  <div style={{padding:'5rem'}}>
+    {!loggedInUser ? (
+      <>
+        <div style={{ marginBottom: '2rem' }}>
+          <h2>Login</h2>
+          <form onSubmit={handleLogin}>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button type="submit">Login</button>
+          </form>
+        </div>
 
+        <div style={{ marginBottom: '2rem' }}>
+          <h2>Register</h2>
+          <form onSubmit={handleRegister}>
+            <input
+              type="text"
+              placeholder="Username"
+              value={regUsername}
+              onChange={(e) => setRegUsername(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={regPassword}
+              onChange={(e) => setRegPassword(e.target.value)}
+            />
+            <button type="submit">Register</button>
+          </form>
+        </div>
+      </>
+    ) : (
+      <div>
+        Logged in as <strong>{loggedInUser}</strong>
+        <button onClick={handleLogout}>Logout</button>
+      </div>
+    )}
+
+    {loggedInUser ? (
       <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
-  <div>
-    <input
-      type="text"
-      placeholder="Title"
-      value={title}
-      onChange={(e) => setTitle(e.target.value)}
-      required
-    />
-  </div>
-  <div>
-    <textarea
-      placeholder="Description"
-      value={description}
-      onChange={(e) => setDescription(e.target.value)}
-      required
-    />
-  </div>
-  <div>
-    <label>Game:</label>
-    <select value={game} onChange={(e) => { setGame(e.target.value); setRank(''); setRegion(''); }} required>
-      <option value="">-- Select Game --</option>
-      {gameOptions.map((g) => (
-        <option key={g} value={g}>{g}</option>
-      ))}
-    </select>
-  </div>
-  {game && (
-    <>
+        <div>
+          <input
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <textarea
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Game:</label>
+          <select value={game} onChange={(e) => { setGame(e.target.value); setRank(''); setRegion(''); }} required>
+            <option value="">-- Select Game --</option>
+            {gameOptions.map((g) => (
+              <option key={g} value={g}>{g}</option>
+            ))}
+          </select>
+        </div>
+        {game && (
+          <>
+            <div>
+              <label>Rank:</label>
+              <select value={rank} onChange={(e) => setRank(e.target.value)} required>
+                <option value="">-- Select Rank --</option>
+                {rankOptions[game].map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label>Region:</label>
+              <select value={region} onChange={(e) => setRegion(e.target.value)} required>
+                <option value="">-- Select Region --</option>
+                {regionOptions[game].map((reg) => (
+                  <option key={reg} value={reg}>{reg}</option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
+        <button type="submit">Add Ad</button>
+      </form>
+
+      ) : (
+        <p>You must be logged in to create a listing</p>
+      )}
       <div>
-        <label>Rank:</label>
-        <select value={rank} onChange={(e) => setRank(e.target.value)} required>
-          <option value="">-- Select Rank --</option>
-          {rankOptions[game].map((r) => (
-            <option key={r} value={r}>{r}</option>
-          ))}
+        <h1>Find a duo</h1>
+
+        <label>Game:</label>
+        <select value={filterGame} onChange={(e) => setFilterGame(e.target.value)}>
+          <option value="">All</option>
+          <option value="Valorant">Valorant</option>
+          <option value="League of Legends">League of Legends</option>
+          <option value="CS2">CS2</option>
+          <option value="Overwatch">Overwatch</option>
         </select>
-      </div>
-      <div>
+
         <label>Region:</label>
-        <select value={region} onChange={(e) => setRegion(e.target.value)} required>
-          <option value="">-- Select Region --</option>
-          {regionOptions[game].map((reg) => (
-            <option key={reg} value={reg}>{reg}</option>
-          ))}
+        <select
+          value={filterRegion}
+          onChange={(e) => setFilterRegion(e.target.value)}
+          disabled={!filterGame}
+        >
+          <option value="">All</option>
+          {filterGame &&
+            regionOptions[filterGame]?.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+        </select>
+
+        <label>Rank:</label>
+        <select
+          value={filterRank}
+          onChange={(e) => setFilterRank(e.target.value)}
+          disabled={!filterGame}
+        >
+          <option value="">All</option>
+          {filterGame &&
+            rankOptions[filterGame]?.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
         </select>
       </div>
-    </>
-  )}
-  <button type="submit">Add Ad</button>
-</form>
 
-<div>
-  <h3>Filter Ads</h3>
+      <ul>
+        {ads
+          .filter((ad) => {
+            return (
+              (!filterGame || ad.game === filterGame) &&
+              (!filterRegion || ad.region.toLowerCase().includes(filterRegion.toLowerCase())) &&
+              (!filterRank || ad.rank.toLowerCase().includes(filterRank.toLowerCase()))
+            );
+          })
+          .map((ad) => (
 
-  <label>Game:</label>
-  <select value={filterGame} onChange={(e) => setFilterGame(e.target.value)}>
-    <option value="">All</option>
-    <option value="Valorant">Valorant</option>
-    <option value="League of Legends">League of Legends</option>
-    <option value="CS2">CS2</option>
-    <option value="Overwatch">Overwatch</option>
-  </select>
+            <li key={ad.id}>
+              <strong>{ad.title}</strong> ({ad.game}, {ad.rank}, {ad.region}) - by {ad.creator}: {ad.description}
 
-<label>Region:</label>
-<select
-  value={filterRegion}
-  onChange={(e) => setFilterRegion(e.target.value)}
-  disabled={!filterGame}
->
-  <option value="">All</option>
-  {filterGame &&
-    regionOptions[filterGame]?.map((r) => (
-      <option key={r} value={r}>
-        {r}
-      </option>
-    ))}
-</select>
+              {loggedInUser && loggedInUser.username === ads.creator&&(               
+                <button
+                onClick={() => handleDelete(ad.id)}
+                style={{ marginLeft: '1rem', color: 'red' }}
+              >
+                Delete
+              </button>)}
 
-<label>Rank:</label>
-<select
-  value={filterRank}
-  onChange={(e) => setFilterRank(e.target.value)}
-  disabled={!filterGame}
->
-  <option value="">All</option>
-  {filterGame &&
-    rankOptions[filterGame]?.map((r) => (
-      <option key={r} value={r}>
-        {r}
-      </option>
-    ))}
-</select>
-
-</div>
-
-
-    <ul>
-      {ads
-      .filter((ad) => {
-        return (
-          (!filterGame || ad.game === filterGame) &&
-          (!filterRegion || ad.region.toLowerCase().includes(filterRegion.toLowerCase())) &&
-          (!filterRank || ad.rank.toLowerCase().includes(filterRank.toLowerCase()))
-        );
-      })
-      .map((ad) => (
-
-        <li key={ad.id}>
-          <strong>{ad.title}</strong> ({ad.game}, {ad.rank}, {ad.region}) - by {ad.creator}: {ad.description}
-        </li>
-        ))}
+              <button
+                onClick={() => {
+                  console.log('Edit clicked:', ad);
+                  console.log('ad.game:', ad.game);
+                  setEditingAd(ad.id);
+                  setEditTitle(ad.title);
+                  setEditDescription(ad.description);
+                  setEditGame(ad.game);
+                  setEditRank(ad.rank);
+                  setEditRegion(ad.region);
+                }}
+                style={{ marginLeft: '1rem' }}
+              >
+                Edit
+              </button>
+            </li>
+          ))}
       </ul>
+
+      {editingAd && (
+        <div style={{ marginTop: '2rem' }}>
+          <h3>Edit Ad</h3>
+          <form onSubmit={handleEditSubmit}>
+            <div>
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <textarea
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label>Game:</label>
+              <select value={editGame} onChange={(e) => { setEditGame(e.target.value); setEditRank(''); setEditRegion(''); }} required>
+                <option value="">-- Select Game --</option>
+                {gameOptions.map((g) => (
+                  <option key={g} value={g}>{g}</option>
+                ))}
+              </select>
+            </div>
+            {editGame && (
+              <>
+                <div>
+                  <label>Rank:</label>
+                  <select value={editRank} onChange={(e) => setEditRank(e.target.value)} required>
+                    <option value="">-- Select Rank --</option>
+                    {editGame && rankOptions[editGame].map((r) => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label>Region:</label>
+                  <select value={editRegion} onChange={(e) => setEditRegion(e.target.value)} required>
+                    <option value="">-- Select Region --</option>
+                    {editGame&& regionOptions[editGame].map((reg) => (
+                      <option key={reg} value={reg}>{reg}</option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
+            <button type="submit">Save Changes</button>
+            <button type="button" onClick={() => setEditingAd(null)}>
+              Cancel
+            </button>
+          </form>
+        </div>
+      )}
+
     </div>
   );
 }
