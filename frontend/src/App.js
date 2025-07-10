@@ -361,14 +361,14 @@ const handleLogout = () => {
             <li key={ad.id}>
               <strong>{ad.title}</strong> ({ad.game}, {ad.rank}, {ad.region}) - by {ad.creator}: {ad.description}
 
-              {loggedInUser && loggedInUser.username === ads.creator&&(               
+              {loggedInUser && loggedInUser === ad.creator&&(               
                 <button
                 onClick={() => handleDelete(ad.id)}
                 style={{ marginLeft: '1rem', color: 'red' }}
               >
                 Delete
               </button>)}
-
+              {loggedInUser && loggedInUser === ad.creator&&( 
               <button
                 onClick={() => {
                   console.log('Edit clicked:', ad);
@@ -384,6 +384,7 @@ const handleLogout = () => {
               >
                 Edit
               </button>
+              )}
             </li>
           ))}
       </ul>
