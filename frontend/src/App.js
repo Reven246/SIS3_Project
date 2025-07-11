@@ -1,23 +1,27 @@
-import React, { } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+// App.js
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Header from './pages/Header';
 
 function App() {
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('username');
+    if (storedUser) {
+      setLoggedInUser(storedUser);
+    }
+  }, []);
 
   return (
     <Router>
-      <nav style={{ margin: '1rem' }}>
-        <Link to="/" style={{ marginRight: '1rem' }}>Home</Link>
-        <Link to="/login" style={{ marginRight: '1rem' }}>Login</Link>
-        <Link to="/register">Register</Link>
-      </nav>
-
+      <Header loggedInUser={loggedInUser} setLoggedInUser={setLoggedInUser} />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Home loggedInUser={loggedInUser} />} />
+        <Route path="/login" element={<Login setLoggedInUser={setLoggedInUser} />} />
         <Route path="/register" element={<Register />} />
       </Routes>
     </Router>

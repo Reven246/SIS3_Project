@@ -32,22 +32,28 @@ function Login( {setLoggedInUser}) {
     .catch((err) => console.error('Login error:', err));
 };
   return (
-        <div style={{ marginBottom: '2rem' }}>
+        <div>
           <h2>Login</h2>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleLogin} className="register-form">
+          <div>
             <input
               type="text"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
+            </div>
+            <div>
             <input
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            </div>
+            <div>
             <button type="submit">Login</button>
+            </div>
           </form>
         </div>
   );

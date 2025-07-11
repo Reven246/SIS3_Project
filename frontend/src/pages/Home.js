@@ -108,13 +108,6 @@ const handleEditSubmit = (e) => {
   };
 
 
-
-const handleLogout = () => {
-  localStorage.removeItem('username');
-  setLoggedInUser(null);
-};
-
-
   const gameOptions = ['Valorant', 'League of Legends', 'CS2', 'Overwatch'];
 
   const rankOptions = {
@@ -152,14 +145,6 @@ const handleLogout = () => {
 
   return (
   <div style={{padding:'5rem'}}>
-    {loggedInUser&&(
-
-      <div>
-        Logged in as <strong>{loggedInUser}</strong>
-        <button onClick={handleLogout}>Logout</button>
-      </div>
-    )}
-
     {loggedInUser ? (
       <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
         <div>
@@ -259,47 +244,50 @@ const handleLogout = () => {
         </select>
       </div>
 
-      <ul>
-        {ads
-          .filter((ad) => {
-            return (
-              (!filterGame || ad.game === filterGame) &&
-              (!filterRegion || ad.region.toLowerCase().includes(filterRegion.toLowerCase())) &&
-              (!filterRank || ad.rank.toLowerCase().includes(filterRank.toLowerCase()))
-            );
-          })
-          .map((ad) => (
+<div className="ads-list">
+  {ads
+    .filter((ad) => {
+      return (
+        (!filterGame || ad.game === filterGame) &&
+        (!filterRegion || ad.region.toLowerCase().includes(filterRegion.toLowerCase())) &&
+        (!filterRank || ad.rank.toLowerCase().includes(filterRank.toLowerCase()))
+      );
+    })
+    .map((ad) => (
+      <div key={ad.id} className="ad-item">
+        <h3>{ad.title}</h3>
+        <p><strong>Game:</strong> {ad.game}</p>
+        <p><strong>Rank:</strong> {ad.rank}</p>
+        <p><strong>Region:</strong> {ad.region}</p>
+        <p><strong>By:</strong> {ad.creator}</p>
+        <p><strong>Description:</strong> {ad.description}</p>
 
-            <li key={ad.id}>
-              <strong>{ad.title}</strong> ({ad.game}, {ad.rank}, {ad.region}) - by {ad.creator}: {ad.description}
+        {loggedInUser === ad.creator && (
+          <>
+            <button
+              onClick={() => handleDelete(ad.id)}
+              style={{ marginRight: '0.5rem', color: 'red' }}
+            >
+              Delete
+            </button>
+            <button
+              onClick={() => {
+                setEditingAd(ad.id);
+                setEditTitle(ad.title);
+                setEditDescription(ad.description);
+                setEditGame(ad.game);
+                setEditRank(ad.rank);
+                setEditRegion(ad.region);
+              }}
+            >
+              Edit
+            </button>
+          </>
+        )}
+      </div>
+    ))}
+</div>
 
-              {loggedInUser && loggedInUser === ad.creator&&(               
-                <button
-                onClick={() => handleDelete(ad.id)}
-                style={{ marginLeft: '1rem', color: 'red' }}
-              >
-                Delete
-              </button>)}
-              {loggedInUser && loggedInUser === ad.creator&&( 
-              <button
-                onClick={() => {
-                  console.log('Edit clicked:', ad);
-                  console.log('ad.game:', ad.game);
-                  setEditingAd(ad.id);
-                  setEditTitle(ad.title);
-                  setEditDescription(ad.description);
-                  setEditGame(ad.game);
-                  setEditRank(ad.rank);
-                  setEditRegion(ad.region);
-                }}
-                style={{ marginLeft: '1rem' }}
-              >
-                Edit
-              </button>
-              )}
-            </li>
-          ))}
-      </ul>
 
       {editingAd && (
         <div style={{ marginTop: '2rem' }}>
