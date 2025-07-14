@@ -85,22 +85,113 @@ body {
   background-color: rgb(112, 128, 144);
 }
 
-.oglasi {
- background-color: rgb(28, 31, 44);
- padding: 5px;
- margin: 10px;
- color: white;
-}
-
 .ads-list {
   display: flex;
-  flex-direction: column;
+  flex-direction:column;
   gap: 1rem;
 }
 
 .ad-item {
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  justify-content:space-between;
   background-color: #fafafa;
+  min-height:90px;
+  border-radius: 8px;
+  position:relative;
+}
+
+.ad-item div:first-child,
+.ad-head div:first-child {
+  padding-left: 25px;
+}
+
+.ad-header,
+.ad-item {
+  display: grid;
+  grid-template-columns: 2fr 2fr 2fr 2fr 2fr 3fr 20px;
+  gap: 10px;
+  align-items: center;
+}
+
+.ad-header {
+  font-weight: bold;
+  background-color: #f0f0f0;
+  text-align:center;
+  padding: 10px 0;
+}
+
+.ad-actions{
+  min-width: 100px;
+}
+
+.ad-actions button{
+  display:flex;
+  text-align:center;
+  cursor:pointer;
+  align-self: right;
+}
+
+.ads-table {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 1200px;
+  margin:auto;
+}
+
+.ad-item > div {
+  text-align:left;
+}
+
+.popup-menu {
+  position: absolute;
+  top: 70%;
+  right: 2%;
+  background: rgb(28, 31, 44);
+  padding: 0.5rem;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.popup-menu button {
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: -40px; 
+}
+
+.filter-bar {
+  display: flex;
+  gap: 1rem; 
+  justify-content: flex-start;
+  max-width: 1200px;
+  margin:auto;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+}
+
+.filter-group label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.filter-group select {
+  width: 100%;
+  padding: 4px;
 }

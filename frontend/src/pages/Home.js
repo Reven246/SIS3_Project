@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import ThreeDotsIcon from '../assets/three-dots-vertical-svgrepo-com.svg';
+
 
 function Home() {                        
   const [ads, setAds] = useState([]);
@@ -145,6 +147,7 @@ const handleEditSubmit = (e) => {
 
   return (
   <div style={{padding:'5rem'}}>
+    {/*FORM ZA USTVARIT OGLASE*/}
     {loggedInUser ? (
       <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
         <div>
@@ -201,9 +204,13 @@ const handleEditSubmit = (e) => {
       ) : (
         <p>You must be logged in to create a listing</p>
       )}
+
+
       <div>
         <h1>Find a duo</h1>
-
+        {/* FILTER OGLASOV */}
+      <div className="filter-bar">
+        <div className="filter-group">
         <label>Game:</label>
         <select value={filterGame} onChange={(e) => setFilterGame(e.target.value)}>
           <option value="">All</option>
@@ -212,7 +219,8 @@ const handleEditSubmit = (e) => {
           <option value="CS2">CS2</option>
           <option value="Overwatch">Overwatch</option>
         </select>
-
+        </div>
+        <div className="filter-group">
         <label>Region:</label>
         <select
           value={filterRegion}
@@ -227,7 +235,8 @@ const handleEditSubmit = (e) => {
               </option>
             ))}
         </select>
-
+        </div>
+        <div className="filter-group">
         <label>Rank:</label>
         <select
           value={filterRank}
@@ -243,7 +252,22 @@ const handleEditSubmit = (e) => {
             ))}
         </select>
       </div>
+    </div>
+  </div>
 
+<div className="ads-table">
+      <div className="ad-header">
+        <div>Title</div>
+        <div>Game</div>
+        <div>Rank</div>
+        <div>Region</div>
+        <div>Username</div>
+        <div>Description</div>
+        <div></div>
+      </div>
+
+      
+{/* SEZNAM OGLASOV */}
 <div className="ads-list">
   {ads
     .filter((ad) => {
@@ -253,42 +277,52 @@ const handleEditSubmit = (e) => {
         (!filterRank || ad.rank.toLowerCase().includes(filterRank.toLowerCase()))
       );
     })
-    .map((ad) => (
-      <div key={ad.id} className="ad-item">
-        <h3>{ad.title}</h3>
-        <p><strong>Game:</strong> {ad.game}</p>
-        <p><strong>Rank:</strong> {ad.rank}</p>
-        <p><strong>Region:</strong> {ad.region}</p>
-        <p><strong>By:</strong> {ad.creator}</p>
-        <p><strong>Description:</strong> {ad.description}</p>
 
-        {loggedInUser === ad.creator && (
-          <>
-            <button
-              onClick={() => handleDelete(ad.id)}
-              style={{ marginRight: '0.5rem', color: 'red' }}
-            >
-              Delete
-            </button>
-            <button
-              onClick={() => {
-                setEditingAd(ad.id);
-                setEditTitle(ad.title);
-                setEditDescription(ad.description);
-                setEditGame(ad.game);
-                setEditRank(ad.rank);
-                setEditRegion(ad.region);
-              }}
-            >
-              Edit
-            </button>
-          </>
-        )}
-      </div>
-    ))}
+.map((ad) => (
+  <div key={ad.id} className="ad-item">
+    <div>{ad.title}</div>
+    <div>{ad.game}</div>
+    <div>{ad.rank}</div>
+    <div>{ad.region}</div>
+    <div>{ad.creator}</div>
+    <div>{ad.description}</div>
+    <div className="ad-actions">
+      {loggedInUser === ad.creator && (
+        <div>
+          <button
+            className="menu-button"
+            onClick={() => setEditingAd(editingAd === ad.id ? null : ad.id)}
+          >
+            <img src={ThreeDotsIcon}style={{ width: '20px', height: '20px' }}/>
+          </button>
+          {editingAd === ad.id && (
+            <div className="popup-menu">
+              <button onClick={() => handleDelete(ad.id)} style={{ color: 'rgb(211, 211, 211)' }}>
+                Delete
+              </button>
+              <button
+                onClick={() => {
+                  setEditingAd(ad.id);
+                  setEditTitle(ad.title);
+                  setEditDescription(ad.description);
+                  setEditGame(ad.game);
+                  setEditRank(ad.rank);
+                  setEditRegion(ad.region);
+                }}
+                style={{ color: 'rgb(211, 211, 211)' }}>
+                Edit
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+))
+}
 </div>
-
-
+</div>
+            {/* ZA EDITANJE OGLASOV */}
       {editingAd && (
         <div style={{ marginTop: '2rem' }}>
           <h3>Edit Ad</h3>
