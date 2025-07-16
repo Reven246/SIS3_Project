@@ -174,8 +174,8 @@ body {
 .filter-bar {
   display: flex;
   gap: 1rem; 
-  justify-content: flex-start;
   max-width: 1200px;
+  justify-content: flex-start;
   margin:auto;
   margin-bottom: 20px;
 }
@@ -194,4 +194,130 @@ body {
 .filter-group select {
   width: 100%;
   padding: 4px;
+}
+
+.create-ad-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  background-color: rgb(67, 182, 249);
+  color: white;
+  border: none;
+  cursor: pointer;
+  align-self: center;
+  height: 50px;
+  margin-left: 2rem;
+}
+
+.create-ad-button:hover{
+  box-shadow: 0px 0px 40px #61dafb;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.ad-button-container{
+  display: flex;
+  justify-content: center;  
+}
+
+.login-message{
+  text-align:center;
+  color:red;
+  font-size:25px;
+  background-color:white;
+  width:fit-content;
+  margin: 20px auto;
+  padding: 10px;
+  border-radius: 5px;
+  cursor:pointer;
+}
+
+.login-message:hover{
+  background-color:rgb(204, 204, 204)
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: rgb(28, 31, 44);
+  color: white;          
+}
+
+nav{
+  display: flex;
+  padding: 10px;
+  gap: 30px;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+  color: #d1d1d1; /* Hover effect */
+}
+
+.user-status{
+  display: flex;
+  align-items: center;
+}
+
+.user-status button{
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #ff4d4d; 
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.user-status button:hover {
+  background-color: #e00101; /* Darker red when hovered */
+}
+
+.username{
+  margin-right: 1rem;
+  font-size: 16px;
+}
+
+h1{
+  text-align:center;
+  color:rgb(247, 247, 247);
+  font-size: 40px;
+}
+
+.ad-button-container p{
+  font-size: 30px;
+  color: white;
 }

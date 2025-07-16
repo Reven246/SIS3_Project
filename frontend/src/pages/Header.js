@@ -12,16 +12,16 @@ function Header({ loggedInUser, setLoggedInUser }) {
   };
 
   return (
-    <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem' }}>
-      <nav style={{ display: 'flex', gap: '1rem' }}>
-        <Link to="/">Home</Link>
-        {!loggedInUser && <Link to="/login">Login</Link>}
-        {!loggedInUser && <Link to="/register">Register</Link>}
+    <header>
+      <nav>
+        <Link  className="nav-link" to="/">Home</Link>
+        {!loggedInUser && <Link  className="nav-link" to="/login">Login</Link>}
+        {!loggedInUser && <Link  className="nav-link" to="/register">Register</Link>}
       </nav>
 
       {loggedInUser && (
-        <div>
-          <span style={{ marginRight: '1rem' }}>Logged in as <strong>{loggedInUser}</strong></span>
+        <div className="user-status">
+          <span className="username">Logged in as <strong>{loggedInUser}</strong></span>
           <button onClick={handleLogout}>Logout</button>
         </div>
       )}

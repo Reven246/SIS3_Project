@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ThreeDotsIcon from '../assets/three-dots-vertical-svgrepo-com.svg';
+import { useNavigate } from 'react-router-dom';
 
 
 function Home() {                        
@@ -11,6 +12,9 @@ function Home() {
   const [region, setRegion] = useState('');
   const [creator, setCreator] = useState('');
   const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('username') || null);
+  const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate(); 
+
 
 
   //Filtri
@@ -148,8 +152,21 @@ const handleEditSubmit = (e) => {
   return (
   <div style={{padding:'5rem'}}>
     {/*FORM ZA USTVARIT OGLASE*/}
-    {loggedInUser ? (
-      <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
+    <div className="ad-button-container">
+      <p>Post your ad now and team up with the best players!</p>
+      <button onClick={() => setShowPopup(true)} className="create-ad-button">
+      Create Ad
+      </button>
+    </div>
+
+  {/*POPUP*/}
+    {showPopup && (
+      <>
+      {loggedInUser ? (
+  <div className="popup-overlay" onClick={() => setShowPopup(false)}>
+    <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+      <h2>Create New Ad</h2> 
+        <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
         <div>
           <input
             type="text"
@@ -200,13 +217,13 @@ const handleEditSubmit = (e) => {
         )}
         <button type="submit">Add Ad</button>
       </form>
-
+    </div>
+  </div>
       ) : (
-        <p>You must be logged in to create a listing</p>
-      )}
-
-
-      <div>
+        <p className="login-message" onClick={() => navigate('/login')}>Log in to create your ad! Click here to log in.</p>
+    )}
+  </>
+)}
         <h1>Find a duo</h1>
         {/* FILTER OGLASOV */}
       <div className="filter-bar">
@@ -253,7 +270,6 @@ const handleEditSubmit = (e) => {
         </select>
       </div>
     </div>
-  </div>
 
 <div className="ads-table">
       <div className="ad-header">
@@ -322,7 +338,7 @@ const handleEditSubmit = (e) => {
 }
 </div>
 </div>
-            {/* ZA EDITANJE OGLASOV */}
+     {/* ZA EDITANJE OGLASOV */}
       {editingAd && (
         <div style={{ marginTop: '2rem' }}>
           <h3>Edit Ad</h3>
@@ -380,7 +396,6 @@ const handleEditSubmit = (e) => {
           </form>
         </div>
       )}
-
     </div>
   );
 }
