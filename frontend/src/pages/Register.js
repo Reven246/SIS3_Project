@@ -6,7 +6,7 @@ function Register() {
   const navigate = useNavigate();
   const [regUsername, setRegUsername] = useState('');
   const [regPassword, setRegPassword] = useState('');
-
+  const [gameTag, setGameTag] = useState('');
 
 //Handle REGISTER
 const handleRegister = (e) => {
@@ -15,7 +15,7 @@ const handleRegister = (e) => {
   fetch('http://localhost:3001/users/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: regUsername, password: regPassword }),
+    body: JSON.stringify({ username: regUsername, password: regPassword, game_tag: gameTag,}),
   })
     .then((res) => res.json())
     .then((data) => {
@@ -25,6 +25,7 @@ const handleRegister = (e) => {
         alert('Registracija uspešna, sedaj se lahko prijavite');
         setRegUsername('');
         setRegPassword('');
+        setGameTag('');
         navigate('/login');
       }
     })
@@ -52,6 +53,14 @@ const handleRegister = (e) => {
               onChange={(e) => setRegPassword(e.target.value)}
             />
             </div>
+            <div>
+            <input
+              type="text"
+              placeholder="Game Tag" // New field for game tag
+              value={gameTag}
+              onChange={(e) => setGameTag(e.target.value)}  // Handle game tag input
+            />
+          </div>
             <div>
             <button type="submit">Create an account</button>
             </div>

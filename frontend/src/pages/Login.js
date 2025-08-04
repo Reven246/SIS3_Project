@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+
+
 
 function Login( {setLoggedInUser}) {
   const navigate = useNavigate();
@@ -55,6 +57,14 @@ function Login( {setLoggedInUser}) {
             <button type="submit">Login</button>
             </div>
           </form>
+
+          <div style={{ marginTop: '10px', textAlign:'center'}}>
+            <span style={{textalign: 'center', color:'white', width: '100%'}}>Don't yet have an account? </span>
+            <Link to="/register" style={{ color: 'blue', textDecoration: 'underline' }}>
+              Register here
+            </Link>
+          </div>
+
         </div>
   );
 }

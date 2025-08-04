@@ -4,12 +4,20 @@ const db = require('../db.js');
 
 //GET 
 router.get('/', (req, res) => {
-  db.query('SELECT * FROM ads', (err, results) => {
+  const query = `
+    SELECT a.*, u.game_tag
+    FROM ads a
+    JOIN accounts u ON a.creator = u.username;
+  `;
+
+  db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching oglas:', err);
       return res.status(500).json({ error: 'Database error' });
     }
-    res.json(results);
+
+    console.log("Fetched ads with game tag:", results); // Log the data to ensure game_tag is included
+    res.json(results);  // Return the results with game_tag
   });
 });
 

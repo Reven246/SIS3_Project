@@ -4,14 +4,16 @@ const db = require('../db.js');
 
 // Register
 router.post('/register', (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, game_tag } = req.body;
 
   if (!username || !password) {
     return res.status(400).json({ error: 'Username and password required.' });
   }
 
-  const query = 'INSERT INTO accounts (username, password) VALUES (?, ?)';
-  db.query(query, [username, password], (err, result) => {
+  const tag = game_tag || null;
+
+  const query = 'INSERT INTO accounts (username, password, game_tag) VALUES (?, ?, ?)';
+  db.query(query, [username, password, tag], (err, result) => {
     if (err) {
       console.error('Error registering:', err);
       return res.status(500).json({ error: 'Database error' });

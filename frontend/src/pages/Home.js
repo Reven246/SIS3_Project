@@ -12,6 +12,7 @@ function Home() {
   const [region, setRegion] = useState('');
   const [creator, setCreator] = useState('');
   const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('username') || null);
+  const [showMenu, setShowMenu] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate(); 
 
@@ -30,6 +31,12 @@ function Home() {
   const [editRank, setEditRank] = useState('');
   const [editRegion, setEditRegion] = useState('');
 
+  //za opgg link
+    const gameShortNames = {
+    'League of Legends': 'lol',
+    'Valorant': 'valorant',
+    'Overwatch': 'overwatch',
+  };
 
 
   // Load ads on page load
@@ -300,18 +307,25 @@ const handleEditSubmit = (e) => {
     <div>{ad.game}</div>
     <div>{ad.rank}</div>
     <div>{ad.region}</div>
-    <div>{ad.creator}</div>
+    <div>      <a 
+        href={`https://op.gg/${gameShortNames[ad.game]}/summoners/${ad.region}/${ad.creator}-${ad.game_tag}`} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        style={{textDecoration: 'underline' }}
+      >
+        {ad.creator}
+      </a></div>
     <div>{ad.description}</div>
     <div className="ad-actions">
-      {loggedInUser === ad.creator && (
+      {(loggedInUser === ad.creator || loggedInUser === 'admin') && (
         <div>
           <button
             className="menu-button"
-            onClick={() => setEditingAd(editingAd === ad.id ? null : ad.id)}
+            onClick={() => setShowMenu(showMenu === ad.id ? null : ad.id)}
           >
             <img src={ThreeDotsIcon}style={{ width: '20px', height: '20px' }}/>
           </button>
-          {editingAd === ad.id && (
+          {showMenu === ad.id && (
             <div className="popup-menu">
               <button onClick={() => handleDelete(ad.id)} style={{ color: 'rgb(211, 211, 211)' }}>
                 Delete
