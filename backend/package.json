@@ -4,8 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "render-build": "npm install && cd ../frontend && npm install && npm run build && cd ../backend"
   },
+
+  "engines": {
+  "node": "20.x"
+},
+
   "keywords": [],
   "author": "",
   "license": "ISC",
