@@ -17,11 +17,15 @@ app.use('/oglasi', oglasiRoutes);
 
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-// DEBUG: Log all registered routes
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+
+  // DEBUG: Log all registered routes
 app._router.stack.forEach((middleware) => {
   if (middleware.route) {
     console.log('Route:', middleware.route.path);
@@ -33,8 +37,4 @@ app._router.stack.forEach((middleware) => {
     });
   }
 });
-
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
 });
