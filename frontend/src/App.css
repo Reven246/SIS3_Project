@@ -399,27 +399,3 @@ h1{
   font-size: 16px;
   border-radius: 6px;
 }
-
-.ads-table, .ad-header, .ads-list, .ad-item {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  color: black !important;
-  position: relative !important;
-}
-
-.ads-table {
-  min-height: 200px !important;
-  padding: 20px !important;
-  background: rgba(255, 255, 255, 0.05) !important; /* to see container bounds */
-}
-
-.ad-header {
-  background: #f0f0f0 !important;
-  z-index: 10;
-}
-
-.ad-item {
-  background: #fafafa !important;
-  border: 1px solid #ccc;
-}
