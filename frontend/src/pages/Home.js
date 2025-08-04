@@ -14,6 +14,7 @@ function Home() {
   const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('username') || null);
   const [showMenu, setShowMenu] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState(false);
   const navigate = useNavigate(); 
 
 
@@ -37,6 +38,18 @@ function Home() {
     'Valorant': 'valorant',
     'Overwatch': 'overwatch',
   };
+
+const openEditPopup = (ad) => {
+  setEditingAd(ad);  // set the full ad object
+  setEditTitle(ad.title);
+  setEditDescription(ad.description);
+  setEditGame(ad.game);
+  setEditRank(ad.rank);
+  setEditRegion(ad.region);
+  setShowEditPopup(true); // Open the edit popup
+};
+
+
 
 
   // Load ads on page load
@@ -72,9 +85,9 @@ function Home() {
 //hANDLE EDIT 
 const handleEditSubmit = (e) => {
   e.preventDefault();
-  console.log('Editing ad ID:', editingAd);
+  console.log('Editing ad ID:', editingAd.id);
   console.log('PUT data:', { title: editTitle, description: editDescription, game: editGame, rank: editRank, region: editRegion });
-  fetch(`http://localhost:3001/oglasi/${editingAd}`, {
+  fetch(`http://localhost:3001/oglasi/${editingAd.id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -90,7 +103,7 @@ const handleEditSubmit = (e) => {
       console.log('Edit response:', data);
       setAds(
         ads.map((ad) =>
-          ad.id === editingAd
+          ad.id === editingAd.id
             ? {
                 ...ad,
                 title: editTitle,
@@ -103,6 +116,7 @@ const handleEditSubmit = (e) => {
         )
       );
       setEditingAd(null);
+      setShowEditPopup(false);
     })
     .catch((err) => console.error('Error editing ad:', err));
 };
@@ -158,6 +172,7 @@ const handleEditSubmit = (e) => {
 
   return (
   <div style={{padding:'5rem'}}>
+    <h1>Find the perfect duo!</h1>
     {/*FORM ZA USTVARIT OGLASE*/}
     <div className="ad-button-container">
       <p>Post your ad now and team up with the best players!</p>
@@ -231,7 +246,7 @@ const handleEditSubmit = (e) => {
     )}
   </>
 )}
-        <h1>Find a duo</h1>
+
         {/* FILTER OGLASOV */}
       <div className="filter-bar">
         <div className="filter-group">
@@ -331,13 +346,7 @@ const handleEditSubmit = (e) => {
                 Delete
               </button>
               <button
-                onClick={() => {
-                  setEditingAd(ad.id);
-                  setEditTitle(ad.title);
-                  setEditDescription(ad.description);
-                  setEditGame(ad.game);
-                  setEditRank(ad.rank);
-                  setEditRegion(ad.region);
+                onClick={() => {openEditPopup(ad) /*df----------------------------------------------------------------------------------------------*/
                 }}
                 style={{ color: 'rgb(211, 211, 211)' }}>
                 Edit
@@ -353,63 +362,68 @@ const handleEditSubmit = (e) => {
 </div>
 </div>
      {/* ZA EDITANJE OGLASOV */}
-      {editingAd && (
-        <div style={{ marginTop: '2rem' }}>
-          <h3>Edit Ad</h3>
-          <form onSubmit={handleEditSubmit}>
+{showEditPopup && (
+  <div className="popup-overlay" onClick={() => setShowEditPopup(false)}>
+    <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+      <h2>Edit Ad</h2>
+      <form onSubmit={handleEditSubmit} style={{ marginBottom: '2rem' }}>
+        <div>
+          <input
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <textarea
+            value={editDescription}
+            onChange={(e) => setEditDescription(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Game:</label>
+          <select value={editGame} onChange={(e) => setEditGame(e.target.value)} required>
+            <option value="">-- Select Game --</option>
+            {gameOptions.map((g) => (
+              <option key={g} value={g}>{g}</option>
+            ))}
+          </select>
+        </div>
+        {editGame && (
+          <>
             <div>
-              <input
-                type="text"
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <textarea
-                value={editDescription}
-                onChange={(e) => setEditDescription(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label>Game:</label>
-              <select value={editGame} onChange={(e) => { setEditGame(e.target.value); setEditRank(''); setEditRegion(''); }} required>
-                <option value="">-- Select Game --</option>
-                {gameOptions.map((g) => (
-                  <option key={g} value={g}>{g}</option>
+              <label>Rank:</label>
+              <select value={editRank} onChange={(e) => setEditRank(e.target.value)} required>
+                <option value="">-- Select Rank --</option>
+                {rankOptions[editGame].map((r) => (
+                  <option key={r} value={r}>{r}</option>
                 ))}
               </select>
             </div>
-            {editGame && (
-              <>
-                <div>
-                  <label>Rank:</label>
-                  <select value={editRank} onChange={(e) => setEditRank(e.target.value)} required>
-                    <option value="">-- Select Rank --</option>
-                    {editGame && rankOptions[editGame].map((r) => (
-                      <option key={r} value={r}>{r}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label>Region:</label>
-                  <select value={editRegion} onChange={(e) => setEditRegion(e.target.value)} required>
-                    <option value="">-- Select Region --</option>
-                    {editGame&& regionOptions[editGame].map((reg) => (
-                      <option key={reg} value={reg}>{reg}</option>
-                    ))}
-                  </select>
-                </div>
-              </>
-            )}
-            <button type="submit">Save Changes</button>
-            <button type="button" onClick={() => setEditingAd(null)}>
-              Cancel
-            </button>
-          </form>
+            <div>
+              <label>Region:</label>
+              <select value={editRegion} onChange={(e) => setEditRegion(e.target.value)} required>
+                <option value="">-- Select Region --</option>
+                {regionOptions[editGame].map((reg) => (
+                  <option key={reg} value={reg}>{reg}</option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
+        <div className="popup-buttons">
+        <button type="submit">Save Changes</button>
+        <button type="button" onClick={() => setShowEditPopup(false)}>
+          Cancel
+        </button>
         </div>
-      )}
+      </form>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
