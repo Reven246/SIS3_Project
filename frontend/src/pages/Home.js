@@ -54,7 +54,7 @@ const openEditPopup = (ad) => {
 
   // Load ads on page load
   useEffect(() => {
-    fetch('http://localhost:3001/oglasi')
+    fetch('${process.env.REACT_APP_API_URL}/oglasi')
       .then((response) => response.json())
       .then((data) => setAds(data))
       .catch((error) => console.error('Error fetching ads:', error));
@@ -64,7 +64,7 @@ const openEditPopup = (ad) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch('http://localhost:3001/oglasi', {
+    fetch('${process.env.REACT_APP_API_URL}/oglasi', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, description, game, rank, region, creator: loggedInUser})
@@ -87,7 +87,7 @@ const handleEditSubmit = (e) => {
   e.preventDefault();
   console.log('Editing ad ID:', editingAd.id);
   console.log('PUT data:', { title: editTitle, description: editDescription, game: editGame, rank: editRank, region: editRegion });
-  fetch(`http://localhost:3001/oglasi/${editingAd.id}`, {
+  fetch(`${process.env.REACT_APP_API_URL}/oglasi`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -123,7 +123,7 @@ const handleEditSubmit = (e) => {
 
 
   const handleDelete = (id) => {
-    fetch(`http://localhost:3001/oglasi/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/oglasi/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
