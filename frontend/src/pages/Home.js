@@ -49,16 +49,20 @@ const openEditPopup = (ad) => {
   setShowEditPopup(true); // Open the edit popup
 };
 
-
-
-
   // Load ads on page load
 useEffect(() => {
-  console.log('Fetching ads from:', `${process.env.REACT_APP_API_URL}/oglasi`);
-  fetch(`${process.env.REACT_APP_API_URL}/oglasi`)
-    .then((res) => res.json())
+  const url = `${process.env.REACT_APP_API_URL}/oglasi`;
+  console.log('Fetching ads from:', url);
+
+  fetch(url)
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+      return res.json();
+    })
     .then((data) => {
-      console.log('Fetched ads data:', data); // ✅ Check what comes here
+      console.log('Fetched ads data:', data);
       setAds(data);
     })
     .catch((err) => console.error('Error fetching ads:', err));
