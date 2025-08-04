@@ -56,15 +56,12 @@ const openEditPopup = (ad) => {
 useEffect(() => {
   console.log('Fetching ads from:', `${process.env.REACT_APP_API_URL}/oglasi`);
   fetch(`${process.env.REACT_APP_API_URL}/oglasi`)
-    .then((response) => {
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      return response.json();
-    })
+    .then((res) => res.json())
     .then((data) => {
-      console.log('Fetched ads data:', data);
+      console.log('Fetched ads data:', data); // ✅ Check what comes here
       setAds(data);
     })
-    .catch((error) => console.error('Error fetching ads:', error));
+    .catch((err) => console.error('Error fetching ads:', err));
 }, []);
 
 
