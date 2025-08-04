@@ -53,18 +53,26 @@ const openEditPopup = (ad) => {
 
 
   // Load ads on page load
-  useEffect(() => {
-    fetch('${process.env.REACT_APP_API_URL}/oglasi')
-      .then((response) => response.json())
-      .then((data) => setAds(data))
-      .catch((error) => console.error('Error fetching ads:', error));
-  }, []);
+useEffect(() => {
+  console.log('Fetching ads from:', `${process.env.REACT_APP_API_URL}/oglasi`);
+  fetch(`${process.env.REACT_APP_API_URL}/oglasi`)
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      return response.json();
+    })
+    .then((data) => {
+      console.log('Fetched ads data:', data);
+      setAds(data);
+    })
+    .catch((error) => console.error('Error fetching ads:', error));
+}, []);
+
 
   // Handle form submit
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch('${process.env.REACT_APP_API_URL}/oglasi', {
+    fetch(`${process.env.REACT_APP_API_URL}/oglasi`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, description, game, rank, region, creator: loggedInUser})
@@ -87,7 +95,7 @@ const handleEditSubmit = (e) => {
   e.preventDefault();
   console.log('Editing ad ID:', editingAd.id);
   console.log('PUT data:', { title: editTitle, description: editDescription, game: editGame, rank: editRank, region: editRegion });
-  fetch(`${process.env.REACT_APP_API_URL}/oglasi`, {
+  fetch(`${process.env.REACT_APP_API_URL}/oglasi/${editingAd.id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
