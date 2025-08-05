@@ -60,7 +60,7 @@ function Login( {setLoggedInUser}) {
 
           <div style={{ marginTop: '10px', textAlign:'center'}}>
             <span style={{textalign: 'center', color:'white', width: '100%'}}>Don't yet have an account? </span>
-            <Link to="/register" style={{ color: 'blue', textDecoration: 'underline' }}>
+            <Link to="/register" style={{ color: '#66b2ff', textDecoration: 'underline' }}>
               Register here
             </Link>
           </div>
