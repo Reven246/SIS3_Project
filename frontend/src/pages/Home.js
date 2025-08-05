@@ -335,7 +335,6 @@ const handleEditSubmit = (e) => {
         href={`https://op.gg/${gameShortNames[ad.game]}/summoners/${ad.region}/${ad.creator}-${ad.game_tag}`} 
         target="_blank" 
         rel="noopener noreferrer" 
-        style={{textDecoration: 'underline' }}
       >
         {ad.creator}
       </a></div>

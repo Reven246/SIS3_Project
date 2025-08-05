@@ -39,7 +39,7 @@
 
 .register-form {
   align-items:center;
-  background-color: rgb(28, 31, 44);
+  background-color: rgb(11, 12, 17);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -60,7 +60,7 @@ font-size: 40px;
   border-radius: 5px;
   width: 300px;
   padding: 10px;
-  border: 2px solid black;
+  border: 2px solid rgb(172, 172, 172);
   background-color: rgb(66,61,94);
   color: rgb(152,171,204);
 }
@@ -82,7 +82,7 @@ font-size: 40px;
 }
 
 body {
-  background-color: rgb(112, 128, 144);
+  background-color:rgb(38, 35, 46);
 }
 
 .ads-list {
@@ -93,10 +93,12 @@ body {
 
 .ad-item {
   justify-content:space-between;
-  background-color: #fafafa;
+  background-color: #615d6b;
   min-height:90px;
   border-radius: 8px;
   position:relative;
+  color: rgb(255, 255, 254);
+  border: solid white 1px;
 }
 
 .ad-item div:first-child,
@@ -111,6 +113,18 @@ body {
   gap: 10px;
   align-items: center;
 }
+
+.ad-item a{
+  color: rgb(75, 192, 212);
+  text-decoration: none;
+  transition: text-shadow 0.3s ease, color 0.3s ease
+}
+
+.ad-item a:hover {
+  color: rgb(233, 42, 169);
+    text-shadow: 0 0 15px rgba(250, 6, 108, 0.8)
+}
+
 
 .ad-header {
   font-weight: bold;
@@ -178,6 +192,7 @@ body {
   justify-content: flex-start;
   margin:auto;
   margin-bottom: 20px;
+  color: rgb(241, 241, 241);
 }
 
 .filter-group {
@@ -194,6 +209,7 @@ body {
 .filter-group select {
   width: 100%;
   padding: 4px;
+  border-radius:10px;
 }
 
 .create-ad-button {
@@ -263,7 +279,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: rgb(28, 31, 44);
+  background-color: rgb(18, 20, 29);
   color: white;          
 }
 
@@ -334,6 +350,7 @@ h1{
   flex-direction: column;
   gap: 15px;
   transition: transform 0.3s ease-out;
+  background-color: rgb(27, 30, 43);
 }
 
 
@@ -342,13 +359,14 @@ h1{
   margin: 0;
   font-weight: 600;
   text-align: center;
-  color: #333;
+  color: #ffffff;
 }
 
 .popup-content form {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  color: white;
 }
 
 .popup-content input,
