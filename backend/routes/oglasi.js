@@ -16,8 +16,8 @@ router.get('/', (req, res) => {
       return res.status(500).json({ error: 'Database error' });
     }
 
-    console.log("Fetched ads with game tag:", results); // Log the data to ensure game_tag is included
-    res.json(results);  // Return the results with game_tag
+    console.log("Fetched ads with game tag:", results); //testest
+    res.json(results);  
   });
 });
 

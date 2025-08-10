@@ -27,7 +27,6 @@ function Login( {setLoggedInUser}) {
         setLoggedInUser(data.user.username);
         setUsername('');
         setPassword('');
-        alert('Prijava uspešna')
         navigate('/');
       }
     })

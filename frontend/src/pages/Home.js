@@ -63,7 +63,8 @@ useEffect(() => {
     })
     .then((data) => {
       console.log('Fetched ads data:', data);
-      setAds(data);
+      const sortedAds = data.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setAds(sortedAds);
     })
     .catch((err) => console.error('Error fetching ads:', err));
 }, []);
@@ -81,13 +82,15 @@ useEffect(() => {
       .then((res) => res.json())
       .then((newAd) => {
         console.log('New ad response from backend:', newAd);
-        setAds([...ads, { id: newAd.adId || Date.now(), title, description, game, rank, region, creator}]);
+        window.location.reload(); 
+        setAds([...ads, { id: newAd.adId || Date.now(), title, description, game, rank, region, creator: loggedInUser,       createdAt: new Date().toISOString() // add this for sorting
+      }]);
         setTitle('');
         setDescription('');
         setGame('');
         setRank('');
         setRegion('');
-        setCreator('');
+        setShowPopup(false);
       })
       .catch((err) => console.error('Error posting ad:', err));
   };
@@ -324,7 +327,6 @@ const handleEditSubmit = (e) => {
         (!filterRank || ad.rank.toLowerCase().includes(filterRank.toLowerCase()))
       );
     })
-
 .map((ad) => (
   <div key={ad.id} className="ad-item">
     <div>{ad.title}</div>

@@ -22,7 +22,6 @@ const handleRegister = (e) => {
       if (data.error) {
         alert(data.error);
       } else {
-        alert('Registracija uspešna, sedaj se lahko prijavite');
         setRegUsername('');
         setRegPassword('');
         setGameTag('');
